@@ -24,6 +24,7 @@ export default class BattleSystem {
         this.maxCombo = 5;
         this.comboMultiplierBonus = 1;
 
+        this.isAnimating = false;
         this.isBattleOver = false;
     }
 
@@ -454,16 +455,26 @@ export default class BattleSystem {
     }
 
     playerAttackTrigger() {
-        this.playPlayerAttack();
+        if (this.isAnimating) return;
+        this.isAnimating = true;
+
+         this.playPlayerAttack(() => {
+            this.isAnimating = false;
+        });
         this.playEnemyHit();
     }
 
     enemyAttackTrigger() {
-        this.playEnemyAttack();
+        if (this.isAnimating) return;
+        this.isAnimating = true;
+
+        this.playEnemyAttack(() => {
+            this.isAnimating = false;
+        });
         this.playPlayerHit();
     }
 
-    playPlayerAttack() {
+    playPlayerAttack(onDone) {
         if (!this.player || !this.enemy) return;
 
         const originalX = this.player.x;
@@ -479,6 +490,7 @@ export default class BattleSystem {
             ease: 'Power1',
             onComplete: () => {
                 this.player.x = originalX;
+                if (onDone) onDone();
             }
         });
     }
@@ -510,7 +522,7 @@ export default class BattleSystem {
         });
     }
 
-    playEnemyAttack() {
+    playEnemyAttack(onDone) {
         if (!this.enemy || !this.player) return;
 
         const originalX = this.enemy.x;
@@ -526,6 +538,7 @@ export default class BattleSystem {
             ease: 'Power1',
             onComplete: () => {
                 this.enemy.x = originalX;
+                if (onDone) onDone();
             }
         });
     }

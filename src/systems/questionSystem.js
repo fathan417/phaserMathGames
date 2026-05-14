@@ -161,10 +161,9 @@ export default class QuestionSystem {
 
     handleAnswer(index) {
         if (this.isBattleOver()) return;
-
         if (this.isLocked) return;
-
         if (this.isStaggered) return;
+        if (this.scene.battleSystem.isAnimating) return;
 
         this.isLocked = true;
 
