@@ -93,32 +93,32 @@ export default class QuestionSystem {
                 .setSize(bg.displayWidth, bg.displayHeight)
                 .setInteractive({ useHandCursor: true })
                 btn.on('pointerdown', () => {
-                    scene.tweens.add({
-                        targets: btn,
-                        scaleY: 0.9,
-                        y: btn.y + 5,
-                        duration: 80
-                    });
+                    // scene.tweens.add({
+                    //     targets: btn,
+                    //     scaleY: 0.9,
+                    //     y: btn.y + 5,
+                    //     duration: 80
+                    // });
                 });
 
                 btn.on('pointerup', () => {
-                    scene.tweens.add({
-                        targets: btn,
-                        scaleY: 1,
-                        y: btn.y - 5,
-                        duration: 80
-                    });
+                    // scene.tweens.add({
+                    //     targets: btn,
+                    //     scaleY: 1,
+                    //     y: btn.y - 5,
+                    //     duration: 80
+                    // });
                 
                     this.handleAnswer(index);
                 });
 
                 btn.on('pointerout', () => {
-                    scene.tweens.add({
-                        targets: btn,
-                        scaleY: 1,
-                        y: btn.y,
-                        duration: 80
-                    });
+                    // scene.tweens.add({
+                    //     targets: btn,
+                    //     scaleY: 1,
+                    //     y: btn.y,
+                    //     duration: 80
+                    // });
                 });
 
             btn.width = bg.displayWidth;

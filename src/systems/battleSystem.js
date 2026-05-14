@@ -503,8 +503,8 @@ export default class BattleSystem {
         this.tweens.add({
             targets: this.enemy,
             x: this.enemy.x + 20,
-            duration: 100,
-            delay: 90,
+            duration: 70,
+            delay: 80,
             yoyo: true,
             ease: 'Power1',
             onComplete: () => {
@@ -515,8 +515,8 @@ export default class BattleSystem {
         this.tweens.add({
             targets: this.enemy,
             alpha: 0.2,
-            duration: 80,
-            delay: 90,
+            duration: 70,
+            delay: 80,
             yoyo: true,
             repeat: 3
         });
@@ -551,8 +551,8 @@ export default class BattleSystem {
         this.tweens.add({
             targets: this.player,
             x: this.player.x - 20,
-            duration: 100,
-            delay: 90,
+            duration: 70,
+            delay: 80,
             yoyo: true,
             ease: 'Power1',
             onComplete: () => {
@@ -563,8 +563,8 @@ export default class BattleSystem {
         this.tweens.add({
             targets: this.player,
             alpha: 0.2,
-            duration: 80,
-            delay: 90,
+            duration: 70,
+            delay: 80,
             yoyo: true,
             repeat: 3
         });

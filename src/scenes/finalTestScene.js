@@ -87,6 +87,9 @@ export default class finalTestScene extends Phaser.Scene {
     }
 
     create() {
+        this.isMultiplayer = true;
+        this.hasAnswered = false;
+
         this.finalMusic = this.sound.add("bgmFinal", {
             loop: true,
             volume: 0
@@ -158,13 +161,7 @@ export default class finalTestScene extends Phaser.Scene {
 
         this.questionSystem = new QuestionSystem(this, {
             onAnswer: (isCorrect) => {
-                if (isCorrect) {
-                    this.battleSystem.onCorrectAnswer();
-                    this.battleSystem.playerAttackTrigger();
-                } else {
-                    this.battleSystem.onWrongAnswer();
-                    this.battleSystem.enemyAttackTrigger();
-                }
+                this.handleAnswer(isCorrect);
             },
             onResetTimer: () => {
                 this.battleSystem.timer = 50;
@@ -191,6 +188,81 @@ export default class finalTestScene extends Phaser.Scene {
         this.enemyShadow.x = this.enemy.x;
         this.enemyShadow.y = this.enemy.y + 3;
       }
+    }
+
+    handleAnswer(isCorrect) {
+      if (this.battleSystem.isAnimating) return;
+      if (this.hasAnswered) return;
+
+      this.hasAnswered = true;
+
+      if (this.isMultiplayer) {
+        this.sendAnswerToServer(isCorrect);
+        return;
+      }
+      
+      if (isCorrect) {
+          this.processBattleResult("player");
+      } else {
+          this.processBattleResult("enemy");
+      }
+    }
+
+    processBattleResult(attacker) {
+      if (attacker === "player") {
+          this.battleSystem.onCorrectAnswer();
+          this.battleSystem.playerAttackTrigger();
+      } else {
+          this.battleSystem.onWrongAnswer();
+          this.battleSystem.enemyAttackTrigger();
+      }
+    }
+
+    sendAnswerToServer(isCorrect) {
+      const data = {
+          playerId: "player1",
+          isCorrect: isCorrect,
+          time: Date.now()
+      };
+    
+      this.simulateServerReceive(data);
+    }
+
+    simulateServerReceive(data) {
+      if (!this.serverQueue) {
+          this.serverQueue = [];
+      }
+    
+      this.serverQueue.push(data);
+    
+      setTimeout(() => {
+          this.resolveServerQueue();
+      }, 100);
+    }
+
+    resolveServerQueue() {
+      if (!this.serverQueue || this.serverQueue.length === 0) return;
+      
+      this.serverQueue.sort((a, b) => a.time - b.time);
+      
+      const winner = this.serverQueue[0];
+      
+      if (winner.isCorrect) {
+          this.processBattleResult("player");
+      } else {
+          this.processBattleResult("enemy");
+      }
+    
+      this.serverQueue = [];
+      this.hasAnswered = false; 
+    }
+
+    simulateServerResponse(isCorrect) {
+        if (isCorrect) {
+            this.processBattleResult("player");
+        } else {
+            this.processBattleResult("enemy");
+        }
     }
 
     createShadow(scene, x, y, scale = 1) {
