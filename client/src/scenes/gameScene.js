@@ -33,6 +33,10 @@ export default class gameScene extends Phaser.Scene {
   init(data) {
     this.playerData = data.player;
     this.enemyData = data.enemy;
+    this.myId = data.myId;
+    this.myRole = data.myRole;
+    this.mySpawn = data.mySpawn;
+    this.enemySpawn = data.enemySpawn;
     this.selectedSkills = [];
     
     this.coinGame = 25;
@@ -62,8 +66,8 @@ export default class gameScene extends Phaser.Scene {
     this.load.image("props", "assets/environment/props/TX_Props_with_Shadow.png");
     this.load.image("props_no_shadow", "assets/environment/props/TX_Props.png");
 
-    // PLAYER
-    const configs = [this.playerData];
+    // PLAYER & ENEMY
+    const configs = [this.playerData, this.enemyData];
 
     configs.forEach(cfg => {
       const className = cfg.class.toLowerCase().replace(/\s+/g, "");
@@ -146,6 +150,9 @@ export default class gameScene extends Phaser.Scene {
     this.playerCharacter = new CharacterSystem(this, this.playerData.class);
     this.playerCharacter.selectedSubclass = this.playerData.subclass;
 
+    this.enemyCharacter = new CharacterSystem(this, this.enemyData.class);
+    this.enemyCharacter.selectedSubclass = this.enemyData.subclass;
+
     this.prologueTexts = [
       "Selamat datang di Dungeon Terra...",
       "Carilah monument di tiap lantai untuk menambah wawasanmu.",
@@ -167,6 +174,7 @@ export default class gameScene extends Phaser.Scene {
     this.setupMap();
     this.setupProgress();
     this.setupPlayer();
+    this.setupEnemy();
     this.setupCollision();
     this.setupCamera();
     this.setupInput();
@@ -180,14 +188,24 @@ export default class gameScene extends Phaser.Scene {
       this.startPrologue();
     });
 
+    window.socket.on("enemyMove", (data) => {
+      if (!this.enemy) return;
+
+      this.enemy.setPosition(data.x, data.y);
+      if (this.enemy.anims.currentAnim?.key !== data.anim) {
+        this.enemy.anims.play(data.anim, true);
+      }
+    });
+
     this.materialSystem = new MaterialSystem(this);
     this.interactionSystem = new InteractionSystem(this, this.playerData, this.enemyData);
-    this.movementSystem = new MovementSystem(this, this.player, this.playerCharacter);
+    this.movementSystem = new MovementSystem(this, this.player, this.playerCharacter, this.enemy, this.enemyCharacter, this.myId);
   }
 
   update() {
     if (this.isInPrologue) {
       this.player.setVelocity(0);
+      this.enemy.setVelocity(0);
 
       if (this.prologueCloud) {
         this.prologueCloud.setPosition(this.player.x - 100, this.player.y - 100);
@@ -206,11 +224,17 @@ export default class gameScene extends Phaser.Scene {
       guard: 16,
       specialist: 16
     }
-    const keyShadow = this.playerData.class.toLowerCase().replace(/\s+/g, "");
+    const playerKeyShadow = this.playerData.class.toLowerCase().replace(/\s+/g, "");
+    const enemyKeyShadow = this.enemyData.class.toLowerCase().replace(/\s+/g, "");
 
     if (this.player && this.shadow) {
       this.shadow.x = this.player.x;
-      this.shadow.y = this.player.y - shadowMap[keyShadow];
+      this.shadow.y = this.player.y - shadowMap[playerKeyShadow];
+    }
+
+    if (this.enemy && this.enemyShadow) {
+      this.enemyShadow.x = this.enemy.x;
+      this.enemyShadow.y = this.enemy.y - shadowMap[enemyKeyShadow];
     }
 
   }
@@ -604,10 +628,7 @@ export default class gameScene extends Phaser.Scene {
     }
 
     setupPlayer() {
-      const spawnPoint = this.map.findObject(
-        "spawn",
-        obj => obj.name === "playerSpawn"
-      );
+      const mySpawn = this.map.findObject("spawn", obj => obj.name === this.mySpawn);
       const key = getCharKey(this.playerCharacter, "idle", "front");
       const scaleMap = {
         defender: 0.12,
@@ -647,8 +668,8 @@ export default class gameScene extends Phaser.Scene {
       const keyShadow = this.playerData.class.toLowerCase().replace(/\s+/g, "");
 
       this.player = this.physics.add.sprite(
-        spawnPoint.x,
-        spawnPoint.y,
+        mySpawn.x,
+        mySpawn.y,
         key,
         0
       )
@@ -656,8 +677,8 @@ export default class gameScene extends Phaser.Scene {
 
       this.shadow = this.createShadow(
         this,
-        spawnPoint.x,
-        spawnPoint.y - shadowMap[keyShadow],
+        mySpawn.x,
+        mySpawn.y - shadowMap[keyShadow],
       );
 
       this.player.anims.play(key, true);
@@ -667,11 +688,78 @@ export default class gameScene extends Phaser.Scene {
       this.player.body.setOffset(offsetMapX[keyOffsetX], offsetMapY[keyOffsetY]);
     }
 
+    setupEnemy() {
+      const enemySpawn = this.map.findObject("spawn", obj => obj.name === this.enemySpawn);
+      const key = getCharKey(this.enemyCharacter, "idle", "front");
+      const scaleMap = {
+        defender: 0.12,
+        guard: 0.16,
+        specialist: 0.16
+      }
+      const sizeMapX = {
+        defender: 240,
+        guard: 150,
+        specialist: 150
+      }
+      const sizeMapY = {
+        defender: 190,
+        guard: 120,
+        specialist: 120
+      }
+      const offsetMapX = {
+        defender: 300,
+        guard: 160,
+        specialist: 160
+      }
+      const offsetMapY = {
+        defender: 370,
+        guard: 270,
+        specialist: 270
+      }
+      const shadowMap = {
+        defender: 20,
+        guard: 16,
+        specialist: 16
+      }
+      const keyScale = this.enemyData.class.toLowerCase().replace(/\s+/g, "");
+      const keySizeX = this.enemyData.class.toLowerCase().replace(/\s+/g, "");
+      const keySizeY = this.enemyData.class.toLowerCase().replace(/\s+/g, "");
+      const keyOffsetX = this.enemyData.class.toLowerCase().replace(/\s+/g, "");
+      const keyOffsetY = this.enemyData.class.toLowerCase().replace(/\s+/g, "");
+      const keyShadow = this.enemyData.class.toLowerCase().replace(/\s+/g, "");
+
+      this.enemy = this.physics.add.sprite(
+        enemySpawn.x,
+        enemySpawn.y,
+        key,
+        0
+      )
+      .setScale(scaleMap[keyScale] || 0.25);
+
+      this.enemyShadow = this.createShadow(
+        this,
+        enemySpawn.x,
+        enemySpawn.y - shadowMap[keyShadow],
+      );
+
+      this.enemy.anims.play(key, true);
+      this.enemy.setOrigin(0.5, 1);
+      this.enemy.setCollideWorldBounds(true);
+      this.enemy.body.setSize(sizeMapX[keySizeX], sizeMapY[keySizeY]);
+      this.enemy.body.setOffset(offsetMapX[keyOffsetX], offsetMapY[keyOffsetY]);
+    }
+
     setupCollision() {
       this.physics.add.collider(this.player, this.wallLayer);
       this.physics.add.collider(this.player, this.obstacleBottom);
       this.physics.add.collider(this.player, this.interactBottom);
       this.physics.add.collider(this.player, this.decoration);
+
+      this.physics.add.collider(this.enemy, this.wallLayer);
+      this.physics.add.collider(this.enemy, this.obstacleBottom);
+      this.physics.add.collider(this.enemy, this.interactBottom);
+      this.physics.add.collider(this.enemy, this.decoration);
+
     }
 
     setupCamera() {
@@ -701,8 +789,8 @@ export default class gameScene extends Phaser.Scene {
     }
 
     setupAnimation() {
-      // PLAYER ANIMATIONS
-      const configs = [this.playerData];
+      // PLAYER & ENEMY ANIMATIONS
+      const configs = [this.playerData, this.enemyData];
 
       configs.forEach(cfg => {
         const className = cfg.class.toLowerCase().replace(/\s+/g, "");

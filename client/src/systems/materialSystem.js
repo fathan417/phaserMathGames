@@ -32,6 +32,7 @@ export default class MaterialSystem {
     if (!scene.isInMaterial) return false;
 
     scene.player.setVelocity(0);
+    scene.enemy.setVelocity(0);
 
     if (Phaser.Input.Keyboard.JustDown(scene.keySpace)) {
       if (scene.handleFeedbackNext) {

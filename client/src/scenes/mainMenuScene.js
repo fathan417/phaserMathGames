@@ -147,6 +147,9 @@ export default class mainMenuScene extends Phaser.Scene {
     }
 
     create() {
+        this.isBotMatch = null;
+        this.gameHasStarted = false;
+
         this.menuMusic = this.sound.add("bgmMenu", {
             loop: true,
             volume: 0
@@ -228,29 +231,20 @@ export default class mainMenuScene extends Phaser.Scene {
           .setScale(0.2);
 
         playButton.on("pointerdown", () => {
-          this.searchOverlay = this.add.rectangle(
-            0,
-            0,
-            this.scale.width,
-            this.scale.height,
-            0x000000,
-            0.6
-          )
+          this.inputBlocker = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0)
+          .setOrigin(0)
+          .setDepth(50)
+          .setInteractive();
+
+          this.searchOverlay = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.6)
           .setOrigin(0)
           .setDepth(1000);
 
-          this.searchBox = this.add.image(
-            this.scale.width / 2,
-            this.scale.height / 2,
-            "popupBg"
-          )
+          this.searchBox = this.add.image(this.scale.width / 2, this.scale.height / 2, "popupBg")
           .setDepth(1001)
           .setScale(0.3);
 
-          this.searchText = this.add.text(
-            this.scale.width / 2,
-            this.scale.height / 2,
-            "Mencari lawan...",
+          this.searchText = this.add.text(this.scale.width / 2, this.scale.height / 2, "Mencari lawan...",
             {
               fontFamily: 'Poppins, sans-serif',
               fontSize: "42px",
@@ -265,19 +259,73 @@ export default class mainMenuScene extends Phaser.Scene {
         });
 
         window.socket.on("matchFound", (data) => {
-          console.log("Lawan player ditemukan", data);
-              
-          this.enemyType = "player";
-              
+          this.isBotMatch = false;
           this.startAfterMatch();
         });
       
         window.socket.on("matchBot", (data) => {
-          console.log("Lawan bot ditemukan", data);
-        
-          this.enemyType = "bot";
-        
+          this.isBotMatch = true;             
           this.startAfterMatch();
+        });
+
+        window.socket.on("startGame", (data) => {
+          if (this.gameHasStarted && this.startData) return;
+
+          this.startData = data;
+          this.gameHasStarted = true;
+
+          this.tweens.add({
+            targets: this.menuMusic,
+            volume: 0,
+            duration: 1000,
+            ease: "Linear",
+            onComplete: () => {
+              this.menuMusic.stop();
+              this.closePopup();
+              
+              if (this.isBotMatch) {
+                let enemySelected;
+                do {
+                  const randomIndex = Phaser.Math.Between(0, this.characters.length - 1);
+                  enemySelected = this.characters[randomIndex];
+                } while (enemySelected === selected);
+              
+                this.scene.start("gameScene", {
+                  player: {
+                    class: selected.class,
+                    subclass: selected.subclass,
+                    skills: selected.skills
+                  },
+                  enemy: {
+                    class: enemySelected.class,
+                    subclass: enemySelected.subclass,
+                    skills: enemySelected.skills
+                  },
+                  myId: window.socket.id,
+                  myRole: "P1",
+                  mySpawn: "playerSpawn1",
+                });
+    
+              } else {
+                const me = this.startData.players.find(p => p.id === window.socket.id);
+                const enemy = this.startData.players.find(p => p.id !== window.socket.id);
+              
+                this.scene.start("gameScene", {
+                  player: me.character,
+                  enemy: enemy.character,
+                  myId: window.socket.id,
+                  myRole: me.role,
+                  mySpawn: me.spawn,
+                  enemySpawn: enemy.spawn
+                });
+              }
+    
+              if (this.inputBlocker) {
+                this.inputBlocker.destroy();
+              }
+            }
+          });
+
         });
 
         const leaderboardButton = this.add.image(width / 2 + spacing, centerY, "btnLeaderboard")
@@ -289,82 +337,33 @@ export default class mainMenuScene extends Phaser.Scene {
           this.showLeaderboard();
         });
 
-        this.popupOverlay = this.add.rectangle(
-          0,
-          0,
-          this.scale.width,
-          this.scale.height,
-          0x000000,
-          0.6
-        )
+        this.popupOverlay = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.6)
         .setOrigin(0)
         .setDepth(100)
         .setVisible(false);
 
-        this.popupBox = this.add.image(
-          this.scale.width / 2,
-          this.scale.height / 2,
-          "popupBg"
-        )
+        this.popupBox = this.add.image(this.scale.width / 2, this.scale.height / 2, "popupBg")
         .setDepth(101)
         .setVisible(false)
         .setScale(0.675, 0.4);
 
-        // this.popupCloseBtn = this.add.image(
-        //   this.scale.width / 2 + 500,
-        //   this.scale.height / 2 - 220,
-        //   "btnClose"
-        // )
-        // .setInteractive()
-        // .setDepth(102)
-        // .setScale(0.3)
-        // .setVisible(false);
-
-        // this.popupCloseBtn.on("pointerdown", () => {
-        //   this.closePopup();
-        // });
-
-        this.gameStartBtn = this.add.image(
-          this.scale.width / 2 + 500,
-          this.scale.height / 2 + 220,
-          "btnGameStart"
-        )
+        this.gameStartBtn = this.add.image(this.scale.width / 2 + 500, this.scale.height / 2 + 220, "btnGameStart")
         .setInteractive()
         .setDepth(102)
         .setScale(0.3)
         .setVisible(false);
               
         this.gameStartBtn.on("pointerdown", () => {
-            const selected = this.characters[this.currentCharacterIndex];
-                
-            this.tweens.add({
-                targets: this.menuMusic,
-                volume: 0,
-                duration: 1000,
-                ease: "Linear",
-                onComplete: () => {
-                    this.menuMusic.stop();
-                    this.closePopup();
-                    let enemySelected;
-                    do {
-                        const randomIndex = Phaser.Math.Between(0, this.characters.length - 1);
-                        enemySelected = this.characters[randomIndex];
-                    } while (enemySelected === selected);
-                
-                    this.scene.start("gameScene", {
-                        player: {
-                            class: selected.class,
-                            subclass: selected.subclass,
-                            skills: selected.skills
-                        },
-                        enemy: {
-                            class: enemySelected.class,
-                            subclass: enemySelected.subclass,
-                            skills: enemySelected.skills
-                        }
-                    });
-                }
-            });
+          if (this.gameHasStarted) return;
+          this.gameHasStarted = true;
+
+          const selected = this.characters[this.currentCharacterIndex];
+
+          window.socket.emit("selectCharacter", {
+            class: selected.class,
+            subclass: selected.subclass,
+            skills: selected.skills
+          });
         });
 
         this.classText = this.add.text(
@@ -424,6 +423,7 @@ export default class mainMenuScene extends Phaser.Scene {
         .setVisible(false);
 
         this.nextButton.on("pointerdown", () => {
+          if (this.gameHasStarted) return;
           this.currentCharacterIndex++;
         
           if (this.currentCharacterIndex >= this.characters.length) {
@@ -434,6 +434,7 @@ export default class mainMenuScene extends Phaser.Scene {
         });
 
         this.prevButton.on("pointerdown", () => {
+          if (this.gameHasStarted) return;
           this.currentCharacterIndex--;
         
           if (this.currentCharacterIndex < 0) {

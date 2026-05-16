@@ -220,17 +220,17 @@
                  "type":"",
                  "visible":true,
                  "width":11.25,
-                 "x":392.666666666667,
-                 "y":448.333333333333
+                 "x":384,
+                 "y":448
                 }, 
                 {
-                 "height":32,
+                 "height":11,
                  "id":2,
                  "name":"playerSpawn2",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":32,
+                 "width":11.25,
                  "x":768,
                  "y":448
                 }],
@@ -250,7 +250,7 @@
         {
          "columns":8,
          "firstgid":1,
-         "image":"..\/..\/..\/phaser.js project\/assets\/environment\/tilesets\/TX_Tileset_Grass.png",
+         "image":"..\/..\/..\/..\/phaser.js project\/assets\/environment\/tilesets\/TX_Tileset_Grass.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
@@ -263,7 +263,7 @@
         {
          "columns":16,
          "firstgid":65,
-         "image":"..\/..\/..\/phaser.js project\/assets\/environment\/props\/TX_Plant_with_Shadow.png",
+         "image":"..\/..\/..\/..\/phaser.js project\/assets\/environment\/props\/TX_Plant_with_Shadow.png",
          "imageheight":512,
          "imagewidth":512,
          "margin":0,
@@ -331,7 +331,7 @@
         {
          "columns":16,
          "firstgid":321,
-         "image":"..\/..\/..\/phaser.js project\/assets\/environment\/props\/TX_Props_with_Shadow.png",
+         "image":"..\/..\/..\/..\/phaser.js project\/assets\/environment\/props\/TX_Props_with_Shadow.png",
          "imageheight":512,
          "imagewidth":512,
          "margin":0,
@@ -651,7 +651,7 @@
         {
          "columns":8,
          "firstgid":577,
-         "image":"..\/..\/..\/phaser.js project\/assets\/environment\/tilesets\/TX_Tileset_Stone_Ground.png",
+         "image":"..\/..\/..\/..\/phaser.js project\/assets\/environment\/tilesets\/TX_Tileset_Stone_Ground.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
@@ -664,7 +664,7 @@
         {
          "columns":16,
          "firstgid":641,
-         "image":"..\/..\/..\/phaser.js project\/assets\/environment\/props\/TX_Struct.png",
+         "image":"..\/..\/..\/..\/phaser.js project\/assets\/environment\/props\/TX_Struct.png",
          "imageheight":512,
          "imagewidth":512,
          "margin":0,
@@ -677,7 +677,7 @@
         {
          "columns":16,
          "firstgid":897,
-         "image":"..\/..\/..\/phaser.js project\/assets\/environment\/tilesets\/TX_Tileset_Wall.png",
+         "image":"..\/..\/..\/..\/phaser.js project\/assets\/environment\/tilesets\/TX_Tileset_Wall.png",
          "imageheight":512,
          "imagewidth":512,
          "margin":0,

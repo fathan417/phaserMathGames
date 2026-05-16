@@ -1,10 +1,13 @@
 import { getCharKey } from "../utils/getCharKey.js";
 
 export default class MovementSystem {
-  constructor(scene, player, character) {
+  constructor(scene, player, playerCharacter, enemy, enemyCharacter, myId) {
     this.scene = scene;
     this.player = player;
-    this.character = character;
+    this.enemy = enemy;
+    this.playerCharacter = playerCharacter;
+    this.enemyCharacter = enemyCharacter;
+    this.myId = myId;
     this.speed = 130;
 
     this.lastDirection = "front";
@@ -13,6 +16,8 @@ export default class MovementSystem {
   updateMovement() {
     const scene = this.scene;
     const speed = this.speed;
+
+    if (!this.player || !this.myId) return false;
 
     scene.player.setVelocity(0);
 
@@ -40,13 +45,20 @@ export default class MovementSystem {
       moving = true;
     }
 
+    
     const action = moving ? "walk" : "idle";
-      
-    const key = getCharKey(this.character, action, this.lastDirection);
-      
-    if (this.player.anims.currentAnim?.key !== key) {
-      this.player.anims.play(key, true);
+    const playerKey = getCharKey(this.playerCharacter, action, this.lastDirection);
+    
+    if (this.player.anims.currentAnim?.key !== playerKey) {
+      this.player.anims.play(playerKey, true);
     }
+    
+    window.socket.emit("playerMove", {
+      x: this.player.x,
+      y: this.player.y,
+      anim: playerKey,
+      dir: this.lastDirection
+    });
 
     scene.player.body.velocity.normalize().scale(speed);
     scene.player.setDepth(4);

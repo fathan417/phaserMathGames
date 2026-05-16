@@ -12,13 +12,12 @@ const io = new Server(server, {
 });
 
 let queue = [];
+const rooms = {};
 
 io.on("connection", (socket) => {
   console.log("Player connected:", socket.id);
 
   socket.on("joinQueue", () => {
-    console.log(socket.id, "masuk queue");
-
     const player = {
       id: socket.id,
       socket: socket,
@@ -27,15 +26,21 @@ io.on("connection", (socket) => {
 
     queue.push(player);
 
-    console.log("Current queue:", queue);
-    console.log("player", player.id, "joined the queue. Total in queue:", queue.length);
-
-    // cek apakah ada 2 player
     if (queue.length >= 2) {
         const p1 = queue.shift();
         const p2 = queue.shift();
         
         const roomId = `room-${p1.id}-${p2.id}`;
+
+        rooms[roomId] = {
+          players: [
+            { id: p1.id, character: null, ready: false },
+            { id: p2.id, character: null, ready: false }
+          ]
+        };
+
+        p1.socket.roomId = roomId;
+        p2.socket.roomId = roomId;
         
         p1.socket.join(roomId);
         p2.socket.join(roomId);
@@ -55,9 +60,7 @@ io.on("connection", (socket) => {
         return;
     }
 
-    // timeout 12 detik → fallback bot
     player.timeout = setTimeout(() => {
-      // kalau masih di queue
       const index = queue.findIndex(p => p.id === player.id);
       if (index !== -1) {
         queue.splice(index, 1);
@@ -76,6 +79,45 @@ io.on("connection", (socket) => {
         }, 3000);
       }
     }, 12000);
+  });
+
+  socket.on("selectCharacter", (data) => {
+      const roomId = socket.roomId;
+      if (!roomId || !rooms[roomId]) return;
+
+      const player = rooms[roomId].players.find(p => p.id === socket.id);
+      if (!player) return;
+
+      player.character = data;
+      player.ready = true;
+
+      const room = rooms[roomId];
+      const p1 = room.players[0];
+      const p2 = room.players[1];
+      const allReady = room.players.every(p => p.ready && p.character);
+
+      if (allReady) {
+        io.to(roomId).emit("startGame", {
+          roomId,
+          players: [
+            { id: p1.id, character: p1.character, role: "P1", spawn: "playerSpawn1" },
+            { id: p2.id, character: p2.character, role: "P2", spawn: "playerSpawn2" }
+          ]
+        });
+      }
+  });
+
+  socket.on("playerMove", (data) => {
+    const roomId = socket.roomId;
+    if (!roomId) return;
+
+    socket.to(roomId).emit("enemyMove", {
+      id: socket.id,
+      x: data.x,
+      y: data.y,
+      anim: data.anim,
+      dir: data.dir
+    });
   });
 
   socket.on("disconnect", () => {

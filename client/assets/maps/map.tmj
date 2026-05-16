@@ -658,12 +658,23 @@
                 {
                  "height":32,
                  "id":2,
-                 "name":"playerSpawn",
+                 "name":"playerSpawn1",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":32,
-                 "x":384,
+                 "x":320,
+                 "y":2016
+                }, 
+                {
+                 "height":32,
+                 "id":28,
+                 "name":"playerSpawn2",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":448,
                  "y":2016
                 }],
          "opacity":1,
@@ -961,7 +972,7 @@
          "y":0
         }],
  "nextlayerid":12,
- "nextobjectid":28,
+ "nextobjectid":29,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.11.2",
