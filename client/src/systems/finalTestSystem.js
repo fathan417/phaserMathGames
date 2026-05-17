@@ -21,7 +21,7 @@ export default class FinalTestSystem {
             fill: '#fff'
         }).setDepth(4001).setScrollFactor(0);
 
-        this.comboText = scene.add.text(205, 180, '', {
+        this.comboText = scene.add.text(315, 230, '', {
             fontFamily: 'Poppins, sans-serif',
             fontSize: '22px',
             fontStyle: "bold",
@@ -30,7 +30,7 @@ export default class FinalTestSystem {
         .setDepth(4005)
         .setScrollFactor(0);
 
-        this.ultimateButton = scene.add.image(250, 250, "ult")
+        this.ultimateButton = scene.add.image(360, 300, "ult")
         .setScale(0.3)
         .setDepth(4001)
         .setScrollFactor(0)
@@ -48,61 +48,62 @@ export default class FinalTestSystem {
             this.battleSystem.activateUltimate();
         });
         
-        this.playerName = scene.add.text(215, 115, '', {
+        this.playerName = scene.add.text(315, 170, '', {
             fontFamily: 'Poppins, sans-serif',
-            fontSize: '20px',
+            fontSize: '18px',
             fontStyle: "bold",
             fill: '#fff'
         })
         .setDepth(4005)
         .setScrollFactor(0);
 
-        this.enemyName = scene.add.text(965, 115, '', {
+        this.enemyName = scene.add.text(1160, 170, '', {
             fontFamily: 'Poppins, sans-serif',
-            fontSize: '20px',
+            fontSize: '18px',
             fontStyle: "bold",
             fill: '#fff'
         })
+        .setOrigin(1, 0)
         .setDepth(4005)
         .setScrollFactor(0);
 
-        this.playerHpBarContainerUp = scene.add.image(350, 110, "hpBarContainerUp")
-          .setScale(0.3, 0.25)
+        this.playerHpBarContainerUp = scene.add.image(450, 170, "hpBarContainerUp")
+          .setScale(0.27, 0.22)
           .setDepth(4001)
           .setScrollFactor(0);
 
-        this.playerHpBarBg = scene.add.image(350, 100, "hpBarBg")
-          .setScale(0.2, 0.2)
+        this.playerHpBarBg = scene.add.image(450, 150, "hpBarBg")
+          .setScale(0.17)
           .setDepth(4001)
           .setScrollFactor(0);
 
-        this.playerHpBarFill = scene.add.image(210, 100, "hpBarFill")
-          .setScale(0.3)
+        this.playerHpBarFill = scene.add.image(310, 150, "hpBarFill")
+          .setScale(0.27)
           .setDepth(4002)
           .setScrollFactor(0)
           .setOrigin(0, 0.5);
 
-        this.enemyHpBarContainerUp = scene.add.image(930, 110, "hpBarContainerUp")
-          .setScale(0.3, 0.25)
+        this.enemyHpBarContainerUp = scene.add.image(1020, 170, "hpBarContainerUp")
+          .setScale(0.27, 0.22)
           .setDepth(4001)
           .setScrollFactor(0)
           .setFlipX(true);
 
-        this.enemyHpBarBg = scene.add.image(930, 100, "hpBarBg")
-          .setScale(0.2, 0.2)
+        this.enemyHpBarBg = scene.add.image(1030, 150, "hpBarBg")
+          .setScale(0.17)
           .setDepth(4001)
           .setScrollFactor(0)
           .setFlipX(true);;
 
-        this.enemyHpBarFill = scene.add.image(1070, 100, "hpBarFill")
-          .setScale(0.3)
+        this.enemyHpBarFill = scene.add.image(1170, 150, "hpBarFill")
+          .setScale(0.27)
           .setDepth(4002)
           .setScrollFactor(0)
           .setOrigin(1, 0.5)
           .setFlipX(true);
         
-        this.timerBg = scene.add.image(715, 100, "timerBg")
-          .setScale(0.1125)
+        this.timerBg = scene.add.image(817.5, 160, "timerBg")
+          .setScale(0.125, 0.1125)
           .setDepth(4003)
           .setScrollFactor(0)
           .setOrigin(1, 0.5);

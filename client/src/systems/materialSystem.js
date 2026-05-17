@@ -49,6 +49,10 @@ export default class MaterialSystem {
     const slide = scene.currentMaterial[scene.currentPage];
     this.materialInteraction.clear();
     this.scene.setUIVisible(false);
+    scene.btnRight.setVisible(false).disableInteractive();
+    scene.btnLeft.setVisible(false).disableInteractive();
+    scene.btnUp.setVisible(false).disableInteractive();
+    scene.btnDown.setVisible(false).disableInteractive();
     scene.hasInteracted = false;
 
     if (!scene.currentMaterial || scene.currentMaterial.length === 0) {
@@ -126,6 +130,10 @@ export default class MaterialSystem {
         coinGame: 5
       });
       this.scene.setUIVisible(true);
+      scene.btnRight.setVisible(true).setInteractive();
+      scene.btnLeft.setVisible(true).setInteractive();
+      scene.btnUp.setVisible(true).setInteractive();
+      scene.btnDown.setVisible(true).setInteractive();
     }
 
     scene.isInMaterial = false;

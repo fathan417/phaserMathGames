@@ -285,6 +285,7 @@ export default class mainMenuScene extends Phaser.Scene {
               
               if (this.isBotMatch) {
                 let enemySelected;
+                const selected = this.characters[this.currentCharacterIndex];
                 do {
                   const randomIndex = Phaser.Math.Between(0, this.characters.length - 1);
                   enemySelected = this.characters[randomIndex];
@@ -304,6 +305,8 @@ export default class mainMenuScene extends Phaser.Scene {
                   myId: window.socket.id,
                   myRole: "P1",
                   mySpawn: "playerSpawn1",
+                  enemySpawn: "playerSpawn2",
+                  isMultiplayer: false
                 });
     
               } else {
@@ -316,7 +319,8 @@ export default class mainMenuScene extends Phaser.Scene {
                   myId: window.socket.id,
                   myRole: me.role,
                   mySpawn: me.spawn,
-                  enemySpawn: enemy.spawn
+                  enemySpawn: enemy.spawn,
+                  isMultiplayer: true
                 });
               }
     
@@ -362,7 +366,8 @@ export default class mainMenuScene extends Phaser.Scene {
           window.socket.emit("selectCharacter", {
             class: selected.class,
             subclass: selected.subclass,
-            skills: selected.skills
+            skills: selected.skills,
+            isBotMatch: this.isBotMatch
           });
         });
 

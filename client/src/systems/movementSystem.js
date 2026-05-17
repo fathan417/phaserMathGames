@@ -23,23 +23,23 @@ export default class MovementSystem {
 
     let moving = false;
 
-    if (scene.keys.left.isDown) {
+    if (scene.keys.left.isDown || scene.cursorsMobile.left) {
       this.moveHorizontal(-speed);
       this.lastDirection = "left";
       moving = true;
     
-    } else if (scene.keys.right.isDown) {
+    } else if (scene.keys.right.isDown || scene.cursorsMobile.right) {
       this.moveHorizontal(speed);
       this.lastDirection = "right";
       moving = true;
     }
 
-    if (scene.keys.up.isDown) {
+    if (scene.keys.up.isDown || scene.cursorsMobile.up) {
       this.moveVertical(-speed);
       this.lastDirection = "back";
       moving = true;
     
-    } else if (scene.keys.down.isDown) {
+    } else if (scene.keys.down.isDown || scene.cursorsMobile.down) {
       this.moveVertical(speed);
       this.lastDirection = "front";
       moving = true;

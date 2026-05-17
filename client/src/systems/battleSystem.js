@@ -105,12 +105,9 @@ export default class BattleSystem {
         }
 
         const playerHpPercent = this.playerHP / this.playerMaxHP;
-        this.hpBarBaseScaleX = 0.315;
-        this.hpBarBaseScaleY = 0.3;
-
         const enemyHpPercent = this.enemyHP / this.enemyMaxHP;
-        this.hpBarBaseScaleX = 0.315;
-        this.hpBarBaseScaleY = 0.3;
+        this.hpBarBaseScaleX = 0.28;
+        this.hpBarBaseScaleY = 0.27;
 
         if (this.playerHP <= 0) {
             this.playerHpBarFill.setScale(0, this.hpBarBaseScaleY);
@@ -137,8 +134,8 @@ export default class BattleSystem {
     
       const timerStr = this.timer.toString().padStart(2, '0'); 
     
-      let startX = 625;
-      const y = 115;
+      let startX = 715;
+      const y = 170;
       const spacing = 38;
     
       for (let i = 0; i < timerStr.length; i++) {

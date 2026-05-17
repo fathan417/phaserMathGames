@@ -29,7 +29,7 @@ export default class QuestionSystem {
         this.questionContainer.setScrollFactor(0);
 
         const bg = scene.add.image(850, 200, "timerBg")
-        .setScale(0.6, 0.35)
+        .setScale(0.575, 0.325)
         .disableInteractive()
         .setOrigin(0.5)
         .setPosition(0, 30);
@@ -77,7 +77,7 @@ export default class QuestionSystem {
 
             const bg = scene.add.image(0, 0, "questionBtn")
                 .setOrigin(0.5)
-                .setScale(0.6, 0.2);
+                .setScale(0.575, 0.175);
 
             const txt = scene.add.text(0, 0, opt, {
                 fontFamily: 'Poppins, sans-serif',
@@ -93,32 +93,7 @@ export default class QuestionSystem {
                 .setSize(bg.displayWidth, bg.displayHeight)
                 .setInteractive({ useHandCursor: true })
                 btn.on('pointerdown', () => {
-                    // scene.tweens.add({
-                    //     targets: btn,
-                    //     scaleY: 0.9,
-                    //     y: btn.y + 5,
-                    //     duration: 80
-                    // });
-                });
-
-                btn.on('pointerup', () => {
-                    // scene.tweens.add({
-                    //     targets: btn,
-                    //     scaleY: 1,
-                    //     y: btn.y - 5,
-                    //     duration: 80
-                    // });
-                
                     this.handleAnswer(index);
-                });
-
-                btn.on('pointerout', () => {
-                    // scene.tweens.add({
-                    //     targets: btn,
-                    //     scaleY: 1,
-                    //     y: btn.y,
-                    //     duration: 80
-                    // });
                 });
 
             btn.width = bg.displayWidth;
@@ -171,7 +146,6 @@ export default class QuestionSystem {
         const isCorrect = index === q.correct;
 
         this.onAnswerCallback(isCorrect);
-
         this.nextQuestion();
     }
 

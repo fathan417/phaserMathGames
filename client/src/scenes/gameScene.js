@@ -37,6 +37,7 @@ export default class gameScene extends Phaser.Scene {
     this.myRole = data.myRole;
     this.mySpawn = data.mySpawn;
     this.enemySpawn = data.enemySpawn;
+    this.isMultiplayer = data.isMultiplayer;
     this.selectedSkills = [];
     
     this.coinGame = 25;
@@ -118,6 +119,7 @@ export default class gameScene extends Phaser.Scene {
     // INTERACTION
     this.load.image("btnInteract", "assets/ui/shop/btn.png");
     this.load.image("prologueCloud", "assets/ui/clouds/4.png");
+    this.load.image("btnPlay", "assets/ui/menu/play.png");
   }
 
   create() {
@@ -177,6 +179,7 @@ export default class gameScene extends Phaser.Scene {
     this.setupEnemy();
     this.setupCollision();
     this.setupCamera();
+    this.setupControlButtons();
     this.setupInput();
     this.setupAnimation();
     this.setupInteraction();
@@ -397,27 +400,27 @@ export default class gameScene extends Phaser.Scene {
     setupProgress() {
       this.uiGroup = this.add.group();
 
-      this.uiBg = this.add.image(380, 190, "ui_bg")
+      this.uiBg = this.add.image(440, 230, "ui_bg")
         .setScale(0.08)
         .setDepth(99999)
         .setScrollFactor(0);
 
-      this.coinIcon = this.add.image(365, 175, "coin")
+      this.coinIcon = this.add.image(425, 215, "coin")
         .setScale(0.2)
         .setDepth(99999)
         .setScrollFactor(0);
 
-      this.coinText = this.add.text(385, 167.5, this.coinGame, {
+      this.coinText = this.add.text(445, 207.5, this.coinGame, {
         fontSize: "18px",
         color: "#ffffff"
       }).setDepth(99999).setScrollFactor(0);
 
-      this.statueIcon = this.add.image(365, 200, "statue")
+      this.statueIcon = this.add.image(425, 240, "statue")
         .setScale(0.25)
         .setDepth(99999)
         .setScrollFactor(0);
 
-      this.statueText = this.add.text(385, 193, this.statueProgress, {
+      this.statueText = this.add.text(445, 233, this.statueProgress, {
         fontSize: "18px",
         color: "#ffffff"
       }).setDepth(99999).setScrollFactor(0);
@@ -511,7 +514,12 @@ export default class gameScene extends Phaser.Scene {
               
                   this.scene.start('finalTestScene', {
                       player,
-                      enemy
+                      enemy,
+                      isMultiplayer: this.isMultiplayer,
+                      myId: this.myId,
+                      myRole: this.myRole,
+                      mySpawn: this.mySpawn,
+                      enemySpawn: this.enemySpawn
                   });
               }
           });
@@ -773,6 +781,83 @@ export default class gameScene extends Phaser.Scene {
       this.cameras.main.startFollow(this.player);
       this.cameras.main.setFollowOffset(0, 60);
 
+    }
+
+    setupControlButtons() {
+      this.cursorsMobile = {
+          up: false,
+          down: false,
+          left: false,
+          right: false
+      };
+      const { width, height } = this.scale;
+
+      this.btnRight = this.add.image(width / 2 - 240, height / 2 + 100, "btnPlay")
+          .setScale(0.08)
+          .setScrollFactor(0)
+          .setDepth(41000)
+          .setInteractive();
+
+      this.btnRight.on("pointerdown", () => {
+          this.cursorsMobile.right = true;
+      });
+      this.btnRight.on("pointerup", () => {
+          this.cursorsMobile.right = false;
+      });
+      this.btnRight.on("pointerout", () => {
+          this.cursorsMobile.right = false;
+      });
+
+      this.btnLeft = this.add.image(width / 2 - 320, height / 2 + 100, "btnPlay")
+          .setScale(0.08)
+          .setScrollFactor(0)
+          .setDepth(41000)
+          .setFlipX(true)
+          .setInteractive();
+
+      this.btnLeft.on("pointerdown", () => {
+          this.cursorsMobile.left = true;
+      });
+      this.btnLeft.on("pointerup", () => {
+          this.cursorsMobile.left = false;
+      });
+      this.btnLeft.on("pointerout", () => {
+          this.cursorsMobile.left = false;
+      });
+
+      this.btnUp = this.add.image(width / 2 - 280, height / 2 + 60, "btnPlay")
+          .setScale(0.08)
+          .setScrollFactor(0)
+          .setDepth(41000)
+          .setRotation(-Math.PI / 2)
+          .setInteractive();
+
+      this.btnUp.on("pointerdown", () => {
+          this.cursorsMobile.up = true;
+      });     
+      this.btnUp.on("pointerup", () => {
+          this.cursorsMobile.up = false;
+      });
+      this.btnUp.on("pointerout", () => {
+          this.cursorsMobile.up = false;
+      });
+
+      this.btnDown = this.add.image(width / 2 - 280, height / 2 + 140, "btnPlay")
+          .setScale(0.08)
+          .setScrollFactor(0)
+          .setDepth(41000)
+          .setRotation(Math.PI / 2)
+          .setInteractive();
+
+      this.btnDown.on("pointerdown", () => {
+          this.cursorsMobile.down = true;
+      });     
+      this.btnDown.on("pointerup", () => {
+          this.cursorsMobile.down = false;
+      });
+      this.btnDown.on("pointerout", () => {
+          this.cursorsMobile.down = false;
+      });
     }
 
     setupInput() {

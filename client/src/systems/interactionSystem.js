@@ -167,6 +167,10 @@ export default class InteractionSystem {
     obj.activated = true;
     scene.openSkillSelectionUI();
     scene.setUIVisible(false);
+    scene.btnRight.setVisible(false).disableInteractive();
+    scene.btnLeft.setVisible(false).disableInteractive();
+    scene.btnUp.setVisible(false).disableInteractive();
+    scene.btnDown.setVisible(false).disableInteractive();
     scene.player.setVelocity(0);
   }
 }

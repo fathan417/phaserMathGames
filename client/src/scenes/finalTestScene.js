@@ -14,6 +14,11 @@ export default class finalTestScene extends Phaser.Scene {
     init(data) {
       this.playerData = data.player;
       this.enemyData = data.enemy;
+      this.myId = data.myId;
+      this.myRole = data.myRole;
+      this.mySpawn = data.mySpawn;
+      this.enemySpawn = data.enemySpawn;
+      this.isMultiplayer = data.isMultiplayer;
     }
 
     preload() {
@@ -87,7 +92,7 @@ export default class finalTestScene extends Phaser.Scene {
     }
 
     create() {
-        this.isMultiplayer = true;
+        this.isMultiplayer = this.isMultiplayer || false;
         this.hasAnswered = false;
 
         this.finalMusic = this.sound.add("bgmFinal", {
@@ -198,23 +203,25 @@ export default class finalTestScene extends Phaser.Scene {
 
       if (this.isMultiplayer) {
         this.sendAnswerToServer(isCorrect);
-        return;
+      } else {
+        if (isCorrect) {
+            this.processBattleResult("player");
+        } else {
+            this.processBattleResult("enemy");
+        }
       }
       
-      if (isCorrect) {
-          this.processBattleResult("player");
-      } else {
-          this.processBattleResult("enemy");
-      }
     }
 
     processBattleResult(attacker) {
       if (attacker === "player") {
           this.battleSystem.onCorrectAnswer();
           this.battleSystem.playerAttackTrigger();
+          this.hasAnswered = false; 
       } else {
           this.battleSystem.onWrongAnswer();
           this.battleSystem.enemyAttackTrigger();
+          this.hasAnswered = false; 
       }
     }
 
@@ -317,8 +324,8 @@ export default class finalTestScene extends Phaser.Scene {
 
       this.physics.world.setBounds(0, 0, mapWidth, mapHeight);
 
-      this.cameras.main.setBounds(-70, 200, mapWidth, mapHeight);
-      this.cameras.main.setZoom(1.4);
+      this.cameras.main.setBounds(-80, 130, mapWidth, mapHeight);
+      this.cameras.main.setZoom(1.6);
 
     }
 
