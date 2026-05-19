@@ -154,6 +154,10 @@ export default class BattleSystem {
       }
     }
 
+    setTimerVisible(visible) {
+        this.timerDigits.forEach(d => d.setVisible(visible));
+    }
+
     getDamageMultiplier() {
         switch (this.combo) {
             case 1: return 1.0;
@@ -451,6 +455,39 @@ export default class BattleSystem {
         this.updateUltimateButton();
     }
 
+    // Taruh tepat setelah closing brace method onWrongAnswer()
+    onWrongAnswerMultiplayer() {
+        if (this.isBattleOver) return;
+
+        const duration = this.questionSystem.applyStagger(6000, this.playerCharacter, this.enemyCharacter);
+
+        if (duration) {
+            this.playerCharacter._isStaggered = true;
+            this.scene.time.delayedCall(duration, () => {
+                this.playerCharacter._isStaggered = false;
+            });
+
+            this.time.delayedCall(200, () => {
+                this.player.anims.play(getCharKey(this.playerCharacter, "die"), true);
+                this.time.delayedCall(duration, () => {
+                    this.player.anims.play(getCharKey(this.playerCharacter, "idle", "front"), true);
+                });
+            });
+            this.showStaggerText(duration);
+        }
+
+        this.combo = 0;
+        this.score -= 15;
+        this.score = Math.max(0, this.score);
+        this.updateUltimateButton();
+
+        if (this.playerHP <= 0) {
+            if (!this.playerCharacter._deathDelay?.active) {
+                this.endBattle(false);
+            }
+        }
+    }
+
     playerAttackTrigger() {
         if (this.isAnimating) return;
         this.isAnimating = true;
@@ -710,7 +747,7 @@ export default class BattleSystem {
     triggerOnAttackSkills(attackerChar, defenderChar) {
         if (!attackerChar || !defenderChar) return;
 
-        const silence = this.playerCharacter._silence;
+        const silence = attackerChar._silence;
     
         if (silence?.blockSkills) return;
 

@@ -519,7 +519,8 @@ export default class gameScene extends Phaser.Scene {
                       myId: this.myId,
                       myRole: this.myRole,
                       mySpawn: this.mySpawn,
-                      enemySpawn: this.enemySpawn
+                      enemySpawn: this.enemySpawn,
+                      socket: window.socket
                   });
               }
           });

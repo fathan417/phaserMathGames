@@ -128,7 +128,9 @@ export default class FinalTestSystem {
         });
     
         this.battleSystem.setQuestionSystem(this.questionSystem);
-        this.battleSystem.startTimer();
+        if (!this.scene.isMultiplayer) {
+            this.battleSystem.startTimer();
+        }
     }
 
     endBattle(isWin) {
