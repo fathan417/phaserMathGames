@@ -303,11 +303,17 @@ function resolveRound(roomId) {
 // ── ADVANCE QUESTION ──────────────────────────
 // Reset state ronde dan broadcast nextQuestion ke semua client
 // ─────────────────────────────────────────────
+const TOTAL_QUESTIONS = 15;
+
 function advanceQuestion(roomId) {
   const state = battleState[roomId];
   if (!state) return;
 
   state.questionIndex++;
+  if (state.questionIndex >= TOTAL_QUESTIONS) {
+    state.questionIndex = 0;
+  }
+
   state.answerQueue = [];
   state.lockedRound = false;
 

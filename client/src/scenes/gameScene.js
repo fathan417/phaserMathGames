@@ -756,6 +756,11 @@ export default class gameScene extends Phaser.Scene {
       this.enemy.setCollideWorldBounds(true);
       this.enemy.body.setSize(sizeMapX[keySizeX], sizeMapY[keySizeY]);
       this.enemy.body.setOffset(offsetMapX[keyOffsetX], offsetMapY[keyOffsetY]);
+
+      if (!this.isMultiplayer) {
+        this.enemy.setVisible(false);
+        this.enemyShadow.setVisible(false);
+      }
     }
 
     setupCollision() {

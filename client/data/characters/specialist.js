@@ -20,7 +20,7 @@ const Specialist = {
           effect: {
             type: "modifyStatusDuration",
             status: "stagger",
-            value: 1.5
+            value: 1.4
           }
         },
 
@@ -32,7 +32,7 @@ const Specialist = {
           effect: {
             type: "dot",
             targetStat: "attack",
-            value: 0.25,
+            value: 0.2,
             duration: 3
           }
         },

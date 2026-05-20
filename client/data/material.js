@@ -381,7 +381,7 @@ const materials = {
           }
         ],
         finalFeedback: {
-          correct: "Benar! Peluang kedua kejadian terjadi berurutan adalah hasil perkalian P(A) dan P(B | A). Kamu sudah menggunakan rumus peluang bersyarat dengan tepat.",
+          correct: "Benar! Peluang kedua kejadian terjadi berurutan adalah hasil perkalian P(A) dan P(B | A).",
           wrong: "Coba lagi. Ikuti urutan: kejadian pertama → kondisi → kalikan."
         }
       }

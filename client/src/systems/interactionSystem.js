@@ -127,8 +127,15 @@ export default class InteractionSystem {
 
   handleDoor(obj) {
     const scene = this.scene;
+    let statueCountMax = 0;
 
-    if (scene.groupProgress[obj.group] >= 2 && !obj.activated) {
+    if (scene.isMultiplayer) {
+      statueCountMax = 2;
+    } else {
+      statueCountMax = 1;
+    }
+
+    if (scene.groupProgress[obj.group] >= statueCountMax && !obj.activated) {
       this.openDoorTiles(obj);
 
       scene.currentFloor += 1;

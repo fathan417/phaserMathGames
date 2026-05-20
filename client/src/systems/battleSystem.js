@@ -198,12 +198,7 @@ export default class BattleSystem {
         this.comboMultiplierBonus = 1;
         this.updateUI();
 
-        if (this.playerHP <= 0) {
-            this.endBattle(false);
-            return;
-        }
-
-        if (this.enemyHP <= 0) {
+        if (this.playerHP <= 0 || this.enemyHP <= 0) {
             this.endBattle(true);
             return;
         }
@@ -327,6 +322,12 @@ export default class BattleSystem {
             if (!this.enemyCharacter._deathDelay?.active) {
                 this.endBattle(true);
             }
+            else if (this.scene.isMultiplayer && this.scene.socket) {
+                this.scene.socket.emit("deathDelayActive", {
+                    character: "enemy",
+                    delay: this.enemyCharacter._deathDelayConfig?.delay
+                });
+            }
         }
 
         this.updateUltimateButton();
@@ -449,7 +450,15 @@ export default class BattleSystem {
 
         if (this.playerHP <= 0) {
             if (!this.playerCharacter._deathDelay?.active) {
-                this.endBattle(false);
+                this.endBattle(true);
+            }
+            // Jika deathDelay aktif, biarkan timer di deathDelayStart yang menyelesaikan battle.
+            // Untuk multiplayer: broadcast sinyal deathDelay agar semua client menunggu.
+            else if (this.scene.isMultiplayer && this.scene.socket) {
+                this.scene.socket.emit("deathDelayActive", {
+                    character: "player",
+                    delay: this.playerCharacter._deathDelayConfig?.delay
+                });
             }
         }
         this.updateUltimateButton();
@@ -483,7 +492,15 @@ export default class BattleSystem {
 
         if (this.playerHP <= 0) {
             if (!this.playerCharacter._deathDelay?.active) {
-                this.endBattle(false);
+                this.endBattle(true);
+            }
+            // Jika deathDelay aktif, biarkan timer di deathDelayStart yang menyelesaikan battle.
+            // Broadcast ke semua client agar tidak langsung end di layar mereka.
+            else if (this.scene.isMultiplayer && this.scene.socket) {
+                this.scene.socket.emit("deathDelayActive", {
+                    character: "player",
+                    delay: this.playerCharacter._deathDelayConfig?.delay
+                });
             }
         }
     }
@@ -1263,6 +1280,9 @@ export default class BattleSystem {
                     }
                 
                     this.updateUI();
+                    if (this.scene.isMultiplayer && this.scene.socket) {
+                        this.scene.broadcastHpSync();
+                    }
                 }
             });
         
@@ -1292,9 +1312,17 @@ export default class BattleSystem {
             
                 if (attackerChar === this.playerCharacter) {
                     this.playerHP = 0;
-                    this.endBattle(false);
+                    // Broadcast ke semua client bahwa death delay selesai, baru end battle
+                    if (this.scene.isMultiplayer && this.scene.socket) {
+                        this.scene.socket.emit("deathDelayEnd", { character: "player" });
+                    }
+                    this.endBattle(true);
                 } else {
                     this.enemyHP = 0;
+                    // Broadcast ke semua client bahwa death delay selesai, baru end battle
+                    if (this.scene.isMultiplayer && this.scene.socket) {
+                        this.scene.socket.emit("deathDelayEnd", { character: "enemy" });
+                    }
                     this.endBattle(true);
                 }
             });
@@ -1507,7 +1535,7 @@ export default class BattleSystem {
                 existing.duration = duration;
 
                 if (defenderChar._silence) {
-                    appliedDamage = Math.round(baseStats[targetStat] * 1.5);
+                    appliedDamage = Math.round(baseStats[targetStat] * 0.6);
                 }
 
                 existing.damage = appliedDamage;
@@ -1545,12 +1573,11 @@ export default class BattleSystem {
                         }
                     }
                 
-                    this.showDamageText(
-                        target,
-                        dotData.damage
-                    );
-                
+                    this.showDamageText(target, dotData.damage);
                     this.updateUI();
+                    if (this.scene.isMultiplayer && this.scene.socket) {
+                        this.scene.broadcastHpSync();
+                    }
                 }
             });
         

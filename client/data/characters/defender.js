@@ -6,7 +6,7 @@ const Defender = {
       subclass: "Protector",
 
       baseStats: {
-        attack: 145,
+        attack: 190,
         hp: 3019,
         defense: 147
       },
@@ -25,7 +25,7 @@ const Defender = {
             },
             {
               type: "reflect",
-              ratio: 0.5,
+              ratio: 0.1,
               scaleBy: "attack"
             }
           ]
@@ -82,7 +82,7 @@ const Defender = {
       subclass: "Guardian",
 
       baseStats: {
-        attack: 151,
+        attack: 196,
         hp: 3191,
         defense: 135
       },

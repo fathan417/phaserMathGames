@@ -229,6 +229,9 @@ export default class finalTestScene extends Phaser.Scene {
             if (iWon) {
                 this.battleSystem.onCorrectAnswer();
                 this.battleSystem.playerAttackTrigger();
+                this.time.delayedCall(600, () => {
+                    this.broadcastHpSync();
+                });
             
             } else if (someoneWon) {
                 this.battleSystem.enemyAttackTrigger();
@@ -240,10 +243,6 @@ export default class finalTestScene extends Phaser.Scene {
             }
         
             this.hasAnswered = false;
-        
-            this.time.delayedCall(500, () => {
-                this.broadcastHpSync();
-            });
         });
 
         // ── nextQuestion ──────────────────────────────────────────────
@@ -274,6 +273,13 @@ export default class finalTestScene extends Phaser.Scene {
             this.battleSystem.playerHP = data.enemyHP;
             this.battleSystem.enemyHP  = data.playerHP;
             this.battleSystem.updateUI();
+        });
+
+        this.socket.on("deathDelayActive", ({ character, delay }) => {
+        });
+        
+        this.socket.on("deathDelayEnd", ({ character }) => {
+            this.battleSystem.endBattle(character === "player" ? false : true);
         });
 
         // ── opponentDisconnected ──────────────────────────────────────
@@ -320,6 +326,9 @@ export default class finalTestScene extends Phaser.Scene {
         if (attacker === "player") {
             this.battleSystem.onCorrectAnswer();
             this.battleSystem.playerAttackTrigger();
+            this.time.delayedCall(600, () => {
+                this.broadcastHpSync();
+            });
         } else {
             this.battleSystem.onWrongAnswer();
             if(!this.isMultiplayer) {
@@ -328,9 +337,6 @@ export default class finalTestScene extends Phaser.Scene {
         }
         this.hasAnswered = false;
 
-        this.time.delayedCall(500, () => {
-            this.broadcastHpSync();
-        });
     }
     
     broadcastHpSync() {

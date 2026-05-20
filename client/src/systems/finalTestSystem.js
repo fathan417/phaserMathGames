@@ -72,7 +72,7 @@ export default class FinalTestSystem {
           .setDepth(4001)
           .setScrollFactor(0);
 
-        this.playerHpBarBg = scene.add.image(450, 150, "hpBarBg")
+        this.playerHpBarBg = scene.add.image(430, 150, "hpBarBg")
           .setScale(0.17)
           .setDepth(4001)
           .setScrollFactor(0);
@@ -89,7 +89,7 @@ export default class FinalTestSystem {
           .setScrollFactor(0)
           .setFlipX(true);
 
-        this.enemyHpBarBg = scene.add.image(1030, 150, "hpBarBg")
+        this.enemyHpBarBg = scene.add.image(1050, 150, "hpBarBg")
           .setScale(0.17)
           .setDepth(4001)
           .setScrollFactor(0)

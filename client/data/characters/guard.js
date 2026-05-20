@@ -37,7 +37,7 @@ const Guard = {
           effect: {
             type: "modifier",
             target: "comboMultiplier",
-            value: 1.5
+            value: 1.2
           }
         },
 
@@ -49,8 +49,8 @@ const Guard = {
           effect: {
             type: "nextAttackModifier",
           
-            multiplier: 2.6,
-            missingHpScaling: 0.35,
+            multiplier: 2,
+            missingHpScaling: 0.3,
           
             consumeOnUse: true
           }
@@ -90,7 +90,7 @@ const Guard = {
           type: "passive",
           trigger: "onIncomingAttack",
 
-          chance: 0.25,
+          chance: 0.15,
 
           effect: {
             type: "dodge"

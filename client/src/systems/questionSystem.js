@@ -169,6 +169,9 @@ export default class QuestionSystem {
         // Normalisasi jika server index sudah wrap-around
         this.currentQuestionIndex = serverIndex % maxIndex;
 
+        this.isLocked = false;
+        this.isStaggered = false;
+
         this.loadQuestion();
     }
 
